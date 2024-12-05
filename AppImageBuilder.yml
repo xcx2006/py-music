@@ -4,7 +4,6 @@ AppDir:
   app_info:
     id: music
     name: MusicPlayer
-    icon: path/to/icon.png
     version: 1.0.0
     exec: music
   runtime:
