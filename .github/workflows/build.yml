@@ -40,7 +40,7 @@ jobs:
       id: create_release
       uses: actions/create-release@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.TOKEN }}
       with:
         tag_name: v1.0.0
         release_name: Release v1.0.0
@@ -48,11 +48,8 @@ jobs:
         prerelease: false
 
     - name: Upload Release Asset
-      uses: actions/upload-release-asset@v2
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v1
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: dist/music.exe
-        asset_name: music.exe
-        asset_content_type: application/octet-stream
+        files: dist/music.exe
+      env:
+        GITHUB_TOKEN: ${{ secrets.TOKEN }}
