@@ -28,8 +28,6 @@ jobs:
     - name: Build exe
       run: |
         pyinstaller --onefile --distpath dist music.py
-        mkdir -p dist/exe
-        mv dist/music.exe dist/exe/music.exe
 
     - name: List dist directory contents
       run: |
@@ -41,6 +39,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: dist/exe/music.exe
+        asset_path: dist/music.exe
         asset_name: music.exe
         asset_content_type: application/octet-stream
