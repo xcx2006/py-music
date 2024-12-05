@@ -1,44 +1,58 @@
-name: Build and Distribute
+name: Build and Release EXE
 
 on:
   push:
     branches:
       - main
-  release:
-    types: [created]
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
-    - name: Checkout code
+    - name: Checkout repository
       uses: actions/checkout@v2
 
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: '3.8'
+        python-version: '3.x'
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install pyinstaller
 
-    - name: Build exe
+    - name: Build EXE
       run: |
-        pyinstaller --onefile --distpath dist music.py
+        pyinstaller --onefile music.py
 
-    - name: List dist directory contents
-      run: |
-        dir dist
+    - name: Upload EXE
+      uses: actions/upload-artifact@v2
+      with:
+        name: music-player-exe
+        path: dist/music.exe
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.TOKEN }}
+      with:
+        tag_name: v1.0.0
+        release_name: Release v1.0.0
+        draft: false
+        prerelease: false
 
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.TOKEN }}
       with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: music.exe
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: dist/music.exe
         asset_name: music.exe
         asset_content_type: application/octet-stream
