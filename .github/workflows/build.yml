@@ -45,7 +45,7 @@ jobs:
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
         asset_path: dist/exe/music.exe
@@ -55,7 +55,7 @@ jobs:
     - name: Upload APK Asset
       uses: actions/upload-release-asset@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
         asset_path: dist/apk/*.apk
