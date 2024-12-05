@@ -36,6 +36,12 @@ jobs:
         name: music-player-exe
         path: dist/music.exe
 
+    - name: Create Git Tag
+      id: create_tag
+      run: |
+        git tag v1.0.0
+        git push origin v1.0.0
+
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
