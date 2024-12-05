@@ -1,0 +1,27 @@
+version: 1
+AppDir:
+  path: ./dist/appdir
+  app_info:
+    id: music
+    name: MusicPlayer
+    icon: path/to/icon.png
+    version: 1.0.0
+    exec: music
+  runtime:
+    env:
+      PATH: "$APPDIR/usr/bin:$PATH"
+      LD_LIBRARY_PATH: "$APPDIR/usr/lib:$LD_LIBRARY_PATH"
+      PYTHONPATH: "$APPDIR/usr/lib/python3.8/site-packages"
+  files:
+    - source: ./dist/exe/music
+      target: usr/bin/music
+    - source: /usr/lib/python3.8
+      target: usr/lib/python3.8
+    - source: /usr/lib/x86_64-linux-gnu
+      target: usr/lib/x86_64-linux-gnu
+    - source: /lib/x86_64-linux-gnu
+      target: lib/x86_64-linux-gnu
+    - source: /usr/share/icons
+      target: usr/share/icons
+    - source: /usr/share/applications
+      target: usr/share/applications

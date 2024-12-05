@@ -6,8 +6,8 @@ on:
       - main
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  build-windows:
+    runs-on: windows-latest
 
     steps:
     - name: Checkout code
@@ -23,11 +23,64 @@ jobs:
         python -m pip install --upgrade pip
         pip install pyinstaller
 
-    - name: Build exe
+    - name: Build exe for Windows
       run: |
         pyinstaller --onefile music.py
         mkdir -p dist/exe
-        mv dist/music dist/exe/music.exe
+        mv dist/music.exe dist/exe/music.exe
+
+    - name: Upload Release Asset for Windows
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: dist/exe/music.exe
+        asset_name: music-windows.exe
+        asset_content_type: application/octet-stream
+
+  build-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y patchelf
+        python -m pip install --upgrade pip
+        pip install pyinstaller appimage-builder
+
+    - name: Build AppImage for Linux
+      run: |
+        pyinstaller --onefile music.py
+        mkdir -p dist/appimage
+        appimage-builder --recipe AppImageBuilder.yml
+        mv out/*.AppImage dist/appimage/music.AppImage
+
+    - name: Upload Release Asset for Linux
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: dist/appimage/music.AppImage
+        asset_name: music-linux.AppImage
+        asset_content_type: application/octet-stream
+
+  create_release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
 
     - name: Create Release
       id: create_release
@@ -39,13 +92,3 @@ jobs:
         release_name: Release v1.0.0
         draft: false
         prerelease: false
-
-    - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: dist/exe/music.exe
-        asset_name: music.exe
-        asset_content_type: application/octet-stream
