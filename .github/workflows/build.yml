@@ -38,11 +38,13 @@ jobs:
 
     - name: Create Tag
       id: create_tag
+      env:
+        GITHUB_TOKEN: ${{ secrets.TOKEN }}
       run: |
         git config --global user.name 'github-actions'
         git config --global user.email 'github-actions@github.com'
         git tag v1.0.0
-        git push origin v1.0.0
+        git push https://x-access-token:${{ secrets.TOKEN }}@github.com/xcx2006/py-music.git v1.0.0
 
     - name: Create Release
       id: create_release
