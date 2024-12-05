@@ -25,14 +25,18 @@ jobs:
 
     - name: Build exe
       run: |
-        pyinstaller --onefile music.py
+        pyinstaller --onefile --distpath dist music.py
         mkdir -p dist/exe
-        mv dist/music dist/exe/music.exe
+        mv dist/music.exe dist/exe/music.exe
+
+    - name: List dist directory contents
+      run: |
+        dir dist
 
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
         asset_path: dist/exe/music.exe
