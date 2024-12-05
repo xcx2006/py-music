@@ -24,6 +24,16 @@ jobs:
         pip install pyinstaller
         pip install buildozer cython
 
+    - name: Set up Android SDK
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y openjdk-8-jdk wget unzip
+        wget https://dl.google.com/android/repository/commandlinetools-linux-6609375_latest.zip
+        mkdir -p $HOME/android-sdk/cmdline-tools
+        unzip commandlinetools-linux-6609375_latest.zip -d $HOME/android-sdk/cmdline-tools
+        yes | $HOME/android-sdk/cmdline-tools/tools/bin/sdkmanager --licenses
+        $HOME/android-sdk/cmdline-tools/tools/bin/sdkmanager "platform-tools" "platforms;android-29" "build-tools;29.0.3"
+
     - name: Build exe
       run: |
         pyinstaller --onefile music.py
@@ -34,6 +44,9 @@ jobs:
       run: |
         sudo apt update
         sudo apt install -y build-essential ccache git libncurses5 libffi-dev libssl-dev
+        export ANDROIDSDK=$HOME/android-sdk
+        export ANDROIDNDK=$ANDROIDSDK/ndk-bundle
+        export PATH=$PATH:$ANDROIDSDK/platform-tools:$ANDROIDSDK/cmdline-tools/tools/bin
         buildozer init
         sed -i 's/# (str) Title of your application/(str) Title of your application = MusicPlayer/' buildozer.spec
         sed -i 's/# (str) Package name/(str) Package name = com.example.musicplayer/' buildozer.spec
