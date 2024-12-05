@@ -43,14 +43,20 @@ jobs:
     - name: Build apk
       run: |
         sudo apt update
-        sudo apt install -y build-essential ccache git libncurses5 libffi-dev libssl-dev
+        sudo apt install -y build-essential ccache git libncurses5 libffi-dev libssl-dev openjdk-8-jdk wget unzip
+        wget https://dl.google.com/android/repository/commandlinetools-linux-6609375_latest.zip
+        mkdir -p $HOME/android-sdk/cmdline-tools
+        unzip -q commandlinetools-linux-6609375_latest.zip -d $HOME/android-sdk/cmdline-tools
+        yes | $HOME/android-sdk/cmdline-tools/tools/bin/sdkmanager --licenses
+        $HOME/android-sdk/cmdline-tools/tools/bin/sdkmanager "platform-tools" "platforms;android-29" "build-tools;29.0.3" "ndk;21.3.6528147"
         export ANDROIDSDK=$HOME/android-sdk
-        export ANDROIDNDK=$ANDROIDSDK/ndk-bundle
+        export ANDROIDNDK=$ANDROIDSDK/ndk/21.3.6528147
         export PATH=$PATH:$ANDROIDSDK/platform-tools:$ANDROIDSDK/cmdline-tools/tools/bin
         buildozer init
         sed -i 's/# (str) Title of your application/(str) Title of your application = MusicPlayer/' buildozer.spec
         sed -i 's/# (str) Package name/(str) Package name = com.example.musicplayer/' buildozer.spec
         sed -i 's/# (str) Source code directory/(str) Source code directory = ./' buildozer.spec
+        sed -i 's/# (list) Application requirements/(list) Application requirements = python3,kivy/' buildozer.spec
         buildozer -v android debug
         mkdir -p dist/apk
         mv bin/*.apk dist/apk/
